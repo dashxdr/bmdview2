@@ -49,6 +49,7 @@ const int BKEY_PG_DOWN = 264;
 const int BKEY_F1 = 265;
 const int BKEY_F2 = 266;
 const int BKEY_ALT = 267;
+const int BKEY_ESCAPE = 0x1b;
 #endif
 
 bool isKeyPressed(int key);
