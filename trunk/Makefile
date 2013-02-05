@@ -32,14 +32,8 @@ BMDVIEW2_OBJS = $(BMDVIEW2_SRCS:.cpp=.o)
 # but it seems not to suffice for the 3d mouse api 
 #-sectcreate __TEXT __info_plist Info.plist \
 
-bmdview2_glut: $(BMDVIEW2_OBJS) mac.o
-	g++ -o $@ $^ -O2 \
-	-Wl,-map,bmdview2.map \
-	-L$(LIB3DS_LIB_DIR) -l3ds \
-	-L$(GLEW_LIB_DIR) -lGLEW \
-	-framework OpenGL -framework GLUT \
-	-framework AppKit \
-	-weak_framework 3DconnexionClient  # remove this if you have no 3d mouse
+bmdview2_glut: $(BMDVIEW2_OBJS)
+	g++ -o $@ $^ -O2 -lGL -lGLU -lglut -lGLEW -l3ds
 
 Bmdview2.app: bmdview2_glut Info.plist icon.icns
 	rm -rf Bmdview2.app
