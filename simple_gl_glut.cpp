@@ -307,7 +307,7 @@ int main(int argc, char* argv[])
 #endif
 */
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA);
-  glutInitWindowSize(640, 480);
+  glutInitWindowSize(1280, 1024);
 
   glutCreateWindow("bmdview2");
 
