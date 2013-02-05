@@ -288,7 +288,7 @@ void draw()
 
     //update animations:
     g_time += getLastFrameSeconds();
-    float animTime = 16*g_time; //TODO: find the right factor for this
+    float animTime = 256*g_time; //TODO: find the right factor for this
     if(m.bmd != NULL)
     {
       if(m.bck != NULL)
