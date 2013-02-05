@@ -55,7 +55,7 @@ bmdinfo: $(BMDINFO_OBJS)
 	-framework OpenGL
 
 clean:
-	rm -f `echo $(BMDVIEW2_OBJS) $(BMDINFO_OBJS) | sort | uniq`
+	rm -f `echo $(BMDVIEW2_OBJS) $(BMDINFO_OBJS) | sort | uniq` bmdview2_glut
 
 run: bmdinfo
 	./bmdinfo testdata/model.bmd
