@@ -3,10 +3,21 @@
 #include "GL/glew.h"
 
 static Matrix44f g_camera = Matrix44f::IDENTITY;
+static Matrix44f stored_camera;
 
 Matrix44f getCameraMatrix()
 {
   return g_camera.inverse();
+}
+
+void store_camera_matrix(void)
+{
+	stored_camera = g_camera;
+}
+
+void restore_camera_matrix(void)
+{
+	g_camera = stored_camera;
 }
 
 void prepareCamera()

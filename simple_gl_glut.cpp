@@ -265,6 +265,7 @@ void onKeyboardUp(unsigned char key, int x, int y)
 }
 
 static int downx=0, downy=0, mousedown=0;
+
 const float movespeed = 100;
 void onMouse(int button, int state, int x, int y)
 {
@@ -279,6 +280,7 @@ void onMouse(int button, int state, int x, int y)
 			downx = x;
 			downy = y;
 			mousedown = (button==0) ? 1 : 2;
+			store_camera_matrix();
 		} else
 		{
 			mousedown = 0;
@@ -298,6 +300,9 @@ void onMotion(int x, int y)
 	int min = (g_width < g_height) ? g_width : g_height;
 	const float slidespeed = movespeed * .05 * 1000.0 / min;
 
+	if(mousedown==0)
+		return;
+	restore_camera_matrix();
 	if(isDown[BKEY_SHIFT])
 	{
 		if(mousedown==1)
@@ -324,8 +329,6 @@ void onMotion(int x, int y)
 		turnDown(pivotrate * ( y - downy));
 		walkBack(instep);
 	}
-	downx = x;
-	downy = y;
 }
 
 int specialCode(int glutCode)
