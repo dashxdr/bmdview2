@@ -4,6 +4,8 @@
 #include "Matrix44.h"
 
 Matrix44f getCameraMatrix();
+void store_camera_matrix(void);
+void restore_camera_matrix(void);
 
 void walkLeft(float amount);
 void walkRight(float amount);
