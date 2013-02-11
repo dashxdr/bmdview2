@@ -260,6 +260,16 @@ void onKeyboardUp(unsigned char key, int x, int y)
   isDown[toupper(key)] = false;
 }
 
+void onMouse(int button, int state, int x, int y)
+{
+	printf("onmouse (%d) %d, %d\n", button, x, y);
+}
+
+void onMotion(int x, int y)
+{
+	printf("onmotion %d, %d\n", x, y);
+}
+
 int specialCode(int glutCode)
 {
   switch(glutCode)
@@ -329,6 +339,8 @@ int main(int argc, char* argv[])
   glutDisplayFunc(onDisplay);
   glutReshapeFunc(onReshape);
   glutKeyboardFunc(onKeyboard);
+	glutMouseFunc(onMouse);
+	glutMotionFunc(onMotion);
   glutKeyboardUpFunc(onKeyboardUp);
   glutSpecialFunc(onSpecial);
   glutSpecialUpFunc(onSpecialUp);
