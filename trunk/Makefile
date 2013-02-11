@@ -65,3 +65,6 @@ runglut:
 
 zip:
 	zip bmdview2_src_`date '+%Y%m%d'`.zip *.h *.cpp testdata/tests/ common/gccommon.h addons/*.cpp addons/*.h tev.html tev.markdown style.css resource.rc icon.ico Makefile *.inc gl_template.ds*
+
+test: bmdview2_glut
+	./bmdview2_glut WoodCircleCutPlanet.bdl
