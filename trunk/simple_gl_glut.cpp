@@ -154,7 +154,7 @@ bool isKeyPressed(int k)
 void flush()
 {
   //draw strings
-  if(isKeyPressed(BKEY_TAB))
+//  if(isKeyPressed(BKEY_TAB))
   {
     renderTexts(g_width, g_height, 7, 12,
              g_fontBase, 1.f/getAverageSecondsPerFrame());

@@ -209,7 +209,7 @@ void renderTexts(int w, int h, int fontWidth, int fontHeight, GLuint fontList,
       glColor4f(strings[index].second.r, strings[index].second.g, strings[index].second.b, currAlpha);
     else
       glColor4f(strings[index].second.r, strings[index].second.g, strings[index].second.b, strings[index].second.a);
-    glRasterPos2f(0.0f, line*fontHeight);
+    glRasterPos2f(10.0f, line*fontHeight);
     string& curr = strings[index].first;
 
     col = 0;
