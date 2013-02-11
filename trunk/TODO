@@ -1,5 +1,6 @@
 20130210 - DA
 
-* Mouse input for dragging viewpoint
 * When displaying bones, show it in front of rendered object
 * Fix issue with Mario's eyes not showing up except when 'G' is hit
+* Help text (when F1 pressed) not showing up
+DONE * Mouse input for dragging viewpoint
