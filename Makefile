@@ -68,4 +68,5 @@ zip:
 
 test: bmdview2_glut
 	./bmdview2_glut WoodCircleCutPlanet.bdl
-	#./bmdview2_glut NigeroPlanet.bdl
+test2: bmdview2_glut
+	./bmdview2_glut NigeroPlanet.bdl
