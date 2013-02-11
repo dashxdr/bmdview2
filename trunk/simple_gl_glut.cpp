@@ -262,7 +262,7 @@ void onKeyboardUp(unsigned char key, int x, int y)
   isDown[toupper(key)] = false;
 }
 
-static int downx=0, downy=0, isdown=0;
+static int downx=0, downy=0, mousedown=0;
 const float movespeed = 100;
 void onMouse(int button, int state, int x, int y)
 {
@@ -276,30 +276,43 @@ void onMouse(int button, int state, int x, int y)
 		{
 			downx = x;
 			downy = y;
-			isdown = (button==0) ? 1 : 2;
+			mousedown = (button==0) ? 1 : 2;
 		} else
 		{
-			isdown = 0;
+			mousedown = 0;
 		}
 	}
+}
+
+static float turn_angle(int x, int y)
+{
+	return atan2(y - g_height/2, x - g_width/2);
 }
 
 void onMotion(int x, int y)
 {
 //	printf("onmotion %d, %d\n", x, y);
+	updateModifiers();
 	int min = (g_width < g_height) ? g_width : g_height;
 	const float slidespeed = movespeed * .05 * 1000.0 / min;
-	if(0 && isdown==1)
+
+	if(isDown[BKEY_SHIFT])
 	{
-		walkLeft(slidespeed * (x - downx));
-		walkUp(slidespeed * (y - downy));
-		downx = x;
-		downy = y;
-	} else if(isdown==2 || isdown==1)
+		if(mousedown==1)
+		{
+			walkLeft(slidespeed * (x - downx));
+			walkUp(slidespeed * (y - downy));
+		} else
+		{
+			float a1 = turn_angle(downx, downy);
+			float a2 = turn_angle(x, y);
+			turnCCW(a2 - a1);
+		}
+	} else
 	{
 		float instep = 5000.0;
 		float pivotrate = slidespeed*.0003;
-		if(isdown==2)
+		if(mousedown==2)
 		{
 			instep = 0.0;
 			pivotrate *= -1.0;
@@ -307,10 +320,10 @@ void onMotion(int x, int y)
 		walkForward(instep);
 		turnRight(pivotrate * ( x - downx));
 		turnDown(pivotrate * ( y - downy));
-		downx = x;
-		downy = y;
 		walkBack(instep);
 	}
+	downx = x;
+	downy = y;
 }
 
 int specialCode(int glutCode)
