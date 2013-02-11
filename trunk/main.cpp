@@ -250,8 +250,6 @@ void draw()
     addText("GL error: %s", gluErrorString(error));
 
   setTextColor3f(1.f, .5f, 1.f);
-  if(isKeyPressed(BKEY_ESCAPE))
-    exit(0);
   if(!isKeyPressed(BKEY_F1))
     drawText("F1: show controls");
   else

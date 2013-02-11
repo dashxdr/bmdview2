@@ -254,6 +254,8 @@ void onKeyboard(unsigned char key, int x, int y)
 {
   updateModifiers();
   isDown[toupper(key)] = true;
+	if(key == BKEY_ESCAPE)
+		exit(0);
 }
 
 void onKeyboardUp(unsigned char key, int x, int y)
