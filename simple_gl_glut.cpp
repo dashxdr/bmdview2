@@ -221,7 +221,8 @@ void setupMenu()
 
   glutAddMenuEntry("Print debug stuff", MENU_DEBUG_SECTIONINFO);
 
-  glutAttachMenu(GLUT_RIGHT_BUTTON);
+#warning disabled popup menu associated with right mouse button
+//  glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
 void init3D()
@@ -269,13 +270,13 @@ void onMouse(int button, int state, int x, int y)
 //	printf("onmouse (%d:%d) %d, %d\n", button, state, x, y);
 	if(button==3) walkForward(frontback);
 	if(button==4) walkBack(frontback);
-	if(button==0)
+	if(button==0 || button==2)
 	{
 		if(state==0)
 		{
 			downx = x;
 			downy = y;
-			isdown = 1;
+			isdown = (button==0) ? 1 : 2;
 		} else
 		{
 			isdown = 0;
@@ -288,12 +289,27 @@ void onMotion(int x, int y)
 //	printf("onmotion %d, %d\n", x, y);
 	int min = (g_width < g_height) ? g_width : g_height;
 	const float slidespeed = movespeed * .05 * 1000.0 / min;
-	if(isdown)
+	if(0 && isdown==1)
 	{
 		walkLeft(slidespeed * (x - downx));
-		downx = x;
 		walkUp(slidespeed * (y - downy));
+		downx = x;
 		downy = y;
+	} else if(isdown==2 || isdown==1)
+	{
+		float instep = 5000.0;
+		float pivotrate = slidespeed*.0003;
+		if(isdown==2)
+		{
+			instep = 0.0;
+			pivotrate *= -1.0;
+		}
+		walkForward(instep);
+		turnRight(pivotrate * ( x - downx));
+		turnDown(pivotrate * ( y - downy));
+		downx = x;
+		downy = y;
+		walkBack(instep);
 	}
 }
 
