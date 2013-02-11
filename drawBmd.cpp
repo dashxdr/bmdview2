@@ -276,8 +276,8 @@ void applyMaterial(int index, Model& m, const OglBlock& oglBlock)
     {
       const AlphaCompare& ac = bmd.mat3.alphaCompares[mat.alphaCompIndex];
 
-      if(ac.alphaOp != 0 && ac.alphaOp != 1 //support only and and or for now
-        || (ac.comp0 != ac.comp1 || ac.ref0 != ac.ref1) && (ac.comp1 != 3 || ac.ref1 != 255)
+      if((ac.alphaOp != 0 && ac.alphaOp != 1) //support only and and or for now
+        || ((ac.comp0 != ac.comp1 || ac.ref0 != ac.ref1) && (ac.comp1 != 3 || ac.ref1 != 255))
         )
       {
         drawText("%s: AlphaCompare %d %d %d %d %d unsupported without shaders", name.c_str(), ac.comp0, ac.ref0, ac.alphaOp, ac.comp1, ac.ref1);
@@ -755,6 +755,7 @@ void drawBmd(Model& m, const SceneGraph& sg)
 
   if(isKeyPressed('B'))
   {
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_TEXTURE_2D); //skeleton might be invisible
                               //if texture has alpha 0
     drawSkeleton(bmd, sg);
