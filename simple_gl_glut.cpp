@@ -17,6 +17,7 @@ using namespace std;
 #include "simple_gl.h"
 #include "ui.h"
 #include "resource.h"
+#include "camera.h"
 
 #include "main.h"
 /*
@@ -262,7 +263,11 @@ void onKeyboardUp(unsigned char key, int x, int y)
 
 void onMouse(int button, int state, int x, int y)
 {
+	const float frontback = 50;
 	printf("onmouse (%d) %d, %d\n", button, x, y);
+	if(button==3) walkForward(frontback);
+	if(button==4) walkBack(frontback);
+		
 }
 
 void onMotion(int x, int y)
