@@ -261,18 +261,40 @@ void onKeyboardUp(unsigned char key, int x, int y)
   isDown[toupper(key)] = false;
 }
 
+static int downx=0, downy=0, isdown=0;
+const float movespeed = 100;
 void onMouse(int button, int state, int x, int y)
 {
-	const float frontback = 50;
-	printf("onmouse (%d) %d, %d\n", button, x, y);
+	const float frontback = movespeed * .5;
+//	printf("onmouse (%d:%d) %d, %d\n", button, state, x, y);
 	if(button==3) walkForward(frontback);
 	if(button==4) walkBack(frontback);
-		
+	if(button==0)
+	{
+		if(state==0)
+		{
+			downx = x;
+			downy = y;
+			isdown = 1;
+		} else
+		{
+			isdown = 0;
+		}
+	}
 }
 
 void onMotion(int x, int y)
 {
-	printf("onmotion %d, %d\n", x, y);
+//	printf("onmotion %d, %d\n", x, y);
+	int min = (g_width < g_height) ? g_width : g_height;
+	const float slidespeed = movespeed * .05 * 1000.0 / min;
+	if(isdown)
+	{
+		walkLeft(slidespeed * (x - downx));
+		downx = x;
+		walkUp(slidespeed * (y - downy));
+		downy = y;
+	}
 }
 
 int specialCode(int glutCode)
