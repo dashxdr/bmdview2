@@ -221,8 +221,7 @@ void setupMenu()
 
   glutAddMenuEntry("Print debug stuff", MENU_DEBUG_SECTIONINFO);
 
-#warning disabled popup menu associated with right mouse button
-//  glutAttachMenu(GLUT_RIGHT_BUTTON);
+  glutAttachMenu(GLUT_MIDDLE_BUTTON);
 }
 
 void init3D()
