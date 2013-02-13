@@ -268,7 +268,9 @@ std::string createVertexShaderString(int index, const Mat3& mat)
 
     //test if this is a "light enable" flag: (seems so)
     //*
-    if(chanInfo.litMask != 0)
+//http://kuribo64.cjb.net/?page=thread&id=532#14984
+//printf("%d %d\n", chanInfo.enable, chanInfo.litMask);
+    if(chanInfo.enable != 0)
     {
       MColor amb = { 0, 0, 0, 0 };
       //if(currMat.color2[0] != 0xffff)
@@ -705,8 +707,8 @@ std::string createFragmentShaderString(int index, const Mat3& mat)
     u8 konstAlpha = currMat.constAlphaSel[i];
     const TevStageInfo& stage = mat.tevStageInfos[currMat.tevStageInfo[i]];
 
-    if(konstColor > 7 && konstColor < 0xc
-      || konstAlpha > 7 && konstAlpha < 0x10)
+    if((konstColor > 7 && konstColor < 0xc)
+      || (konstAlpha > 7 && konstAlpha < 0x10))
     {
       warn("createFragmentShaderString: Invalid color sel");
       continue; //should never happen

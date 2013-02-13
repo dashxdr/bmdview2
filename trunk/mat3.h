@@ -18,11 +18,12 @@ struct Color16
 struct ColorChanInfo
 {
   //not sure if this is right
-  u8 ambColorSource;
+  u8 enable;
   u8 matColorSource;
   u8 litMask;
-  u8 attenuationFracFunc;
   u8 diffuseAttenuationFunc;
+  u8 attenuationFracFunc;
+  u8 ambColorSource;
 };
 
 struct TexGenInfo
