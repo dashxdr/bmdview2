@@ -203,6 +203,7 @@ struct ColorChanInfo
 #endif
 
   //I think I finally got it:
+#if 0
   //(enable = litMask != 0...)
   u8 ambColorSource;
   u8 matColorSource;
@@ -211,6 +212,16 @@ struct ColorChanInfo
   u8 diffuseAttenuationFunc;
   u8 unk;
   u8 pad[2];
+#endif
+// http://kuribo64.cjb.net/?page=thread&id=532#14984
+  u8 enable;
+  u8 matColorSource;
+  u8 litMask;
+  u8 diffuseAttenuationFunc;
+  u8 attenuationFracFunc;
+  u8 ambColorSource;
+  u8 pad[2];
+
 };
 
 struct TexGenInfo
@@ -804,18 +815,19 @@ void dumpMat3(FILE* f, Mat3& dst)
   for(i = 0; i < dst.colorChanInfos.size(); ++i)
   {
     bmd::ColorChanInfo info;
-    qfread(&info.ambColorSource, 1, 1, f);
+    qfread(&info.enable, 1, 1, f);
     qfread(&info.matColorSource, 1, 1, f);
     qfread(&info.litMask, 1, 1, f);
-    qfread(&info.attenuationFracFunc, 1, 1, f);
     qfread(&info.diffuseAttenuationFunc, 1, 1, f);
-    qfread(&info.unk, 1, 1, f);
+    qfread(&info.attenuationFracFunc, 1, 1, f);
+    qfread(&info.ambColorSource, 1, 1, f);
     qfread(&info.pad[0], 1, 1, f);
     qfread(&info.pad[1], 1, 1, f);
 
     ColorChanInfo& dstInfo = dst.colorChanInfos[i];
 
     //this is wrong:
+    dstInfo.enable = info.enable;
     dstInfo.ambColorSource = info.ambColorSource;
     dstInfo.matColorSource = info.matColorSource;
     dstInfo.litMask = info.litMask;
