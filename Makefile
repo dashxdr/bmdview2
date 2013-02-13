@@ -46,6 +46,7 @@ Bmdview2.app: bmdview2_glut Info.plist icon.icns
 mac.o: mac.mm
 	g++ -c -O2 mac.mm
 
+mat3.o: common/gccommon.h
 
 #TODO: OpenGL/GLEW shouldn't be required for a mere console program...
 bmdinfo: $(BMDINFO_OBJS)
