@@ -100,25 +100,33 @@ inline u32 memDWORD(const u8* where)
 
 inline void readWORD(FILE* f, u16& v)
 {
-  fread(&v, 2, 1, f);
+  int len;
+  len = fread(&v, 2, 1, f);
+  len=len;
   toWORD(v);
 }
 
 inline void readSHORT(FILE* f, s16& v)
 {
-  fread(&v, 2, 1, f);
+  int len;
+  len = fread(&v, 2, 1, f);
+  len=len;
   toSHORT(v);
 }
 
 inline void readDWORD(FILE* f, u32& v)
 {
-  fread(&v, 4, 1, f);
+  int len;
+  len = fread(&v, 4, 1, f);
+  len=len;
   toDWORD(v);
 }
 
 inline void readFLOAT(FILE* f, f32& v)
 {
-  fread(&v, 4, 1, f);
+  int len;
+  len = fread(&v, 4, 1, f);
+  len=len;
   toFLOAT(v);
 }
 

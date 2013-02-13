@@ -8,6 +8,11 @@
 #include <iostream>
 using namespace std;
 
+static void qfread(void *p, size_t size, size_t num, FILE *stream)
+{
+	int len = fread(p, size, num, stream);
+	len=len;
+}
 //this is still somewhat incomplete...
 
 namespace bmd
@@ -380,12 +385,14 @@ void displayData(ostream& out, const string& str, FILE* f, int offset, int size,
   for(int i = 0, c = 1; i < size; ++i, ++c)
   {
     if(space > 0 && (i%space == 0))
+    {
       if(space >= 16)
         out << endl;
       else
         out << ' ';
+    }
 
-    u8 v; fread(&v, 1, 1, f);
+    u8 v; qfread(&v, 1, 1, f);
     out << hex << setw(2) << setfill('0') << (int)v;
   }
 
@@ -584,7 +591,7 @@ void writeTexMtxInfo(ostream& debugOut, const bmd::TexMtxInfo& info)
 
 void readMat3Header(FILE* f, bmd::Mat3Header& h)
 {
-  fread(h.tag, 1, 4, f);
+  qfread(h.tag, 1, 4, f);
   readDWORD(f, h.sizeOfSection);
   readWORD(f, h.count);
   readWORD(f, h.pad);
@@ -618,7 +625,7 @@ void readMatIndirectTexturingEntry(FILE* f, bmd::MatIndirectTexturingEntry& indE
   {
     for(m = 0; m < 6; ++m)
       readFLOAT(f, indEntry.unk2[k].f[m]);
-    fread(indEntry.unk2[k].b, 1, 4, f);
+    qfread(indEntry.unk2[k].b, 1, 4, f);
   }
 
   for(k = 0; k < 4; ++k)
@@ -631,7 +638,7 @@ void readMatIndirectTexturingEntry(FILE* f, bmd::MatIndirectTexturingEntry& indE
 void readMatEntry(FILE* f, bmd::MatEntry& init, bool isMat2)
 {
   int j;
-  fread(init.unk, 1, 8, f);
+  qfread(init.unk, 1, 8, f);
   for(j = 0; j < 2; ++j) readWORD(f, init.color1[j]);
   for(j = 0; j < 4; ++j) readWORD(f, init.chanControls[j]);
 
@@ -647,8 +654,8 @@ void readMatEntry(FILE* f, bmd::MatEntry& init, bool isMat2)
   for(j = 0; j < 20; ++j) readWORD(f, init.dttMatrices[j]);
   for(j = 0; j < 8; ++j) readWORD(f, init.texStages[j]);
   for(j = 0; j < 4; ++j) readWORD(f, init.color3[j]);
-  fread(init.constColorSel, 1, 16, f);
-  fread(init.constAlphaSel, 1, 16, f);
+  qfread(init.constColorSel, 1, 16, f);
+  qfread(init.constAlphaSel, 1, 16, f);
   for(j = 0; j < 16; ++j) readWORD(f, init.tevOrderInfo[j]);
   for(j = 0; j < 4; ++j) readWORD(f, init.colorS10[j]);
   for(j = 0; j < 16; ++j) readWORD(f, init.tevStageInfo[j]);
@@ -676,23 +683,23 @@ void readTexMtxInfo(FILE* f, bmd::TexMtxInfo& info)
 
 void readTevStageInfo(FILE* f, bmd::TevStageInfo& info)
 {
-  fread(&info.unk, 1, 1, f);
+  qfread(&info.unk, 1, 1, f);
 
-  fread(&info.colorIn, 1, 4, f);
-  fread(&info.colorOp, 1, 1, f);
-  fread(&info.colorBias, 1, 1, f);
-  fread(&info.colorScale, 1, 1, f);
-  fread(&info.colorClamp, 1, 1, f);
-  fread(&info.colorRegId, 1, 1, f);
+  qfread(&info.colorIn, 1, 4, f);
+  qfread(&info.colorOp, 1, 1, f);
+  qfread(&info.colorBias, 1, 1, f);
+  qfread(&info.colorScale, 1, 1, f);
+  qfread(&info.colorClamp, 1, 1, f);
+  qfread(&info.colorRegId, 1, 1, f);
 
-  fread(&info.alphaIn, 1, 4, f);
-  fread(&info.alphaOp, 1, 1, f);
-  fread(&info.alphaBias, 1, 1, f);
-  fread(&info.alphaScale, 1, 1, f);
-  fread(&info.alphaClamp, 1, 1, f);
-  fread(&info.alphaRegId, 1, 1, f);
+  qfread(&info.alphaIn, 1, 4, f);
+  qfread(&info.alphaOp, 1, 1, f);
+  qfread(&info.alphaBias, 1, 1, f);
+  qfread(&info.alphaScale, 1, 1, f);
+  qfread(&info.alphaClamp, 1, 1, f);
+  qfread(&info.alphaRegId, 1, 1, f);
 
-  fread(&info.unk2, 1, 1, f);
+  qfread(&info.unk2, 1, 1, f);
 }
 
 void computeSectionLengths(const bmd::Mat3Header& h, vector<size_t>& lengths)
@@ -779,7 +786,7 @@ void dumpMat3(FILE* f, Mat3& dst)
   dst.color1.resize(lengths[5]/4);
   for(i = 0; i < dst.color1.size(); ++i)
   {
-    u8 col[4]; fread(col, 1, 4, f);
+    u8 col[4]; qfread(col, 1, 4, f);
     dst.color1[i].r = col[0];
     dst.color1[i].g = col[1];
     dst.color1[i].b = col[2];
@@ -789,7 +796,7 @@ void dumpMat3(FILE* f, Mat3& dst)
   //offset[6] (numChans)
   fseek(f, mat3Offset + h.offsets[6], SEEK_SET);
   dst.numChans.resize(lengths[6]);
-  fread(&dst.numChans[0], 1, lengths[6], f);
+  qfread(&dst.numChans[0], 1, lengths[6], f);
 
   //offset[7] (colorChanInfo)
   fseek(f, mat3Offset + h.offsets[7], SEEK_SET);
@@ -797,14 +804,14 @@ void dumpMat3(FILE* f, Mat3& dst)
   for(i = 0; i < dst.colorChanInfos.size(); ++i)
   {
     bmd::ColorChanInfo info;
-    fread(&info.ambColorSource, 1, 1, f);
-    fread(&info.matColorSource, 1, 1, f);
-    fread(&info.litMask, 1, 1, f);
-    fread(&info.attenuationFracFunc, 1, 1, f);
-    fread(&info.diffuseAttenuationFunc, 1, 1, f);
-    fread(&info.unk, 1, 1, f);
-    fread(&info.pad[0], 1, 1, f);
-    fread(&info.pad[1], 1, 1, f);
+    qfread(&info.ambColorSource, 1, 1, f);
+    qfread(&info.matColorSource, 1, 1, f);
+    qfread(&info.litMask, 1, 1, f);
+    qfread(&info.attenuationFracFunc, 1, 1, f);
+    qfread(&info.diffuseAttenuationFunc, 1, 1, f);
+    qfread(&info.unk, 1, 1, f);
+    qfread(&info.pad[0], 1, 1, f);
+    qfread(&info.pad[1], 1, 1, f);
 
     ColorChanInfo& dstInfo = dst.colorChanInfos[i];
 
@@ -822,7 +829,7 @@ void dumpMat3(FILE* f, Mat3& dst)
   dst.color2.resize(lengths[8]/4);
   for(i = 0; i < dst.color2.size(); ++i)
   {
-    u8 col[4]; fread(col, 1, 4, f);
+    u8 col[4]; qfread(col, 1, 4, f);
     dst.color2[i].r = col[0];
     dst.color2[i].g = col[1];
     dst.color2[i].b = col[2];
@@ -905,7 +912,7 @@ void dumpMat3(FILE* f, Mat3& dst)
   //offsets[10] (read texGenCounts)
   fseek(f, mat3Offset + h.offsets[10], SEEK_SET);
   dst.texGenCounts.resize(lengths[10]);
-  fread(&dst.texGenCounts[0], 1, dst.texGenCounts.size(), f);
+  qfread(&dst.texGenCounts[0], 1, dst.texGenCounts.size(), f);
 
   //offsets[11] (texGens)
   fseek(f, mat3Offset + h.offsets[11], SEEK_SET);
@@ -913,10 +920,10 @@ void dumpMat3(FILE* f, Mat3& dst)
   for(i = 0; i < dst.texGenInfos.size(); ++i)
   {
     bmd::TexGenInfo info;
-    fread(&info.texGenType, 1, 1, f);
-    fread(&info.texGenSrc, 1, 1, f);
-    fread(&info.matrix, 1, 1, f);
-    fread(&info.pad, 1, 1, f);
+    qfread(&info.texGenType, 1, 1, f);
+    qfread(&info.texGenSrc, 1, 1, f);
+    qfread(&info.matrix, 1, 1, f);
+    qfread(&info.pad, 1, 1, f);
 
     dst.texGenInfos[i].texGenType = info.texGenType;
     dst.texGenInfos[i].texGenSrc = info.texGenSrc;
@@ -963,7 +970,7 @@ void dumpMat3(FILE* f, Mat3& dst)
   dst.texStageIndexToTextureIndex.resize(texLength/2);
   for(i = 0; i < texLength/2; ++i)
   {
-    u16 index; fread(&index, 2, 1, f); toWORD(index);
+    u16 index; qfread(&index, 2, 1, f); toWORD(index);
     dst.texStageIndexToTextureIndex[i] = index;
   }
 
@@ -973,10 +980,10 @@ void dumpMat3(FILE* f, Mat3& dst)
   for(i = 0; i < dst.tevOrderInfos.size(); ++i)
   {
     bmd::TevOrderInfo info;
-    fread(&info.texCoordId, 1, 1, f);
-    fread(&info.texMap, 1, 1, f);
-    fread(&info.chanId, 1, 1, f);
-    fread(&info.pad, 1, 1, f);
+    qfread(&info.texCoordId, 1, 1, f);
+    qfread(&info.texMap, 1, 1, f);
+    qfread(&info.chanId, 1, 1, f);
+    qfread(&info.pad, 1, 1, f);
 
     dst.tevOrderInfos[i].texCoordId = info.texCoordId;
     dst.tevOrderInfos[i].texMap = info.texMap;
@@ -988,7 +995,7 @@ void dumpMat3(FILE* f, Mat3& dst)
   dst.colorS10.resize(lengths[17]/(4*2));
   for(i = 0; i < dst.colorS10.size(); ++i)
   {
-    s16 col[4]; fread(col, 2, 4, f);
+    s16 col[4]; qfread(col, 2, 4, f);
     dst.colorS10[i].r = aSHORT(col[0]);
     dst.colorS10[i].g = aSHORT(col[1]);
     dst.colorS10[i].b = aSHORT(col[2]);
@@ -1000,7 +1007,7 @@ void dumpMat3(FILE* f, Mat3& dst)
   dst.color3.resize(lengths[18]/4);
   for(i = 0; i < dst.color3.size(); ++i)
   {
-    u8 col[4]; fread(col, 1, 4, f);
+    u8 col[4]; qfread(col, 1, 4, f);
     dst.color3[i].r = col[0];
     dst.color3[i].g = col[1];
     dst.color3[i].b = col[2];
@@ -1010,7 +1017,7 @@ void dumpMat3(FILE* f, Mat3& dst)
   //offset[19] (tevCounts)
   fseek(f, mat3Offset + h.offsets[19], SEEK_SET);
   dst.tevCounts.resize(lengths[19]);
-  fread(&dst.tevCounts[0], 1, dst.tevCounts.size(), f);
+  qfread(&dst.tevCounts[0], 1, dst.tevCounts.size(), f);
 
   //offset[20] (TevStageInfos)
   fseek(f, mat3Offset + h.offsets[20], SEEK_SET);
@@ -1029,9 +1036,9 @@ void dumpMat3(FILE* f, Mat3& dst)
   for(i = 0; i < dst.tevSwapModeInfos.size(); ++i)
   {
     bmd::TevSwapModeInfo info;
-    fread(&info.rasSel, 1, 1, f);
-    fread(&info.texSel, 1, 1, f);
-    fread(info.pad, 1, 2, f);
+    qfread(&info.rasSel, 1, 1, f);
+    qfread(&info.texSel, 1, 1, f);
+    qfread(info.pad, 1, 2, f);
 
     dst.tevSwapModeInfos[i].rasSel = info.rasSel;
     dst.tevSwapModeInfos[i].texSel = info.texSel;
@@ -1043,10 +1050,10 @@ void dumpMat3(FILE* f, Mat3& dst)
   for(i = 0; i < dst.tevSwapModeTables.size(); ++i)
   {
     bmd::TevSwapModeTable table;
-    fread(&table.r, 1, 1, f);
-    fread(&table.g, 1, 1, f);
-    fread(&table.b, 1, 1, f);
-    fread(&table.a, 1, 1, f);
+    qfread(&table.r, 1, 1, f);
+    qfread(&table.g, 1, 1, f);
+    qfread(&table.b, 1, 1, f);
+    qfread(&table.a, 1, 1, f);
 
     TevSwapModeTable dstTable = { table.r, table.g, table.b, table.a };
     dst.tevSwapModeTables[i] = dstTable;
@@ -1058,12 +1065,12 @@ void dumpMat3(FILE* f, Mat3& dst)
   for(i = 0; i < dst.alphaCompares.size(); ++i)
   {
     bmd::AlphaCompare info;
-    fread(&info.comp0, 1, 1, f);
-    fread(&info.ref0, 1, 1, f);
-    fread(&info.alphaOp, 1, 1, f);
-    fread(&info.comp1, 1, 1, f);
-    fread(&info.ref1, 1, 1, f);
-    fread(info.pad, 1, 3, f);
+    qfread(&info.comp0, 1, 1, f);
+    qfread(&info.ref0, 1, 1, f);
+    qfread(&info.alphaOp, 1, 1, f);
+    qfread(&info.comp1, 1, 1, f);
+    qfread(&info.ref1, 1, 1, f);
+    qfread(info.pad, 1, 3, f);
 
     AlphaCompare dstInfo = { info.comp0, info.ref0, info.alphaOp, info.comp1, info.ref1 };
     dst.alphaCompares[i] = dstInfo;
@@ -1075,10 +1082,10 @@ void dumpMat3(FILE* f, Mat3& dst)
   for(i = 0; i < dst.blendInfos.size(); ++i)
   {
     bmd::BlendInfo info;
-    fread(&info.blendMode, 1, 1, f);
-    fread(&info.srcFactor, 1, 1, f);
-    fread(&info.dstFactor, 1, 1, f);
-    fread(&info.logicOp, 1, 1, f);
+    qfread(&info.blendMode, 1, 1, f);
+    qfread(&info.srcFactor, 1, 1, f);
+    qfread(&info.dstFactor, 1, 1, f);
+    qfread(&info.logicOp, 1, 1, f);
 
     BlendInfo dstInfo = { info.blendMode, info.srcFactor, info.dstFactor, info.logicOp };
     dst.blendInfos[i] = dstInfo;
@@ -1090,10 +1097,10 @@ void dumpMat3(FILE* f, Mat3& dst)
   for(i = 0; i < dst.zModes.size(); ++i)
   {
     bmd::ZModeInfo zInfo;
-    fread(&zInfo.enable, 1, 1, f);
-    fread(&zInfo.func, 1, 1, f);
-    fread(&zInfo.updateEnable, 1, 1, f);
-    fread(&zInfo.pad, 1, 1, f);
+    qfread(&zInfo.enable, 1, 1, f);
+    qfread(&zInfo.func, 1, 1, f);
+    qfread(&zInfo.updateEnable, 1, 1, f);
+    qfread(&zInfo.pad, 1, 1, f);
 
     ZMode m;
     m.enable = zInfo.enable != 0;
@@ -1129,7 +1136,7 @@ void writeMat3Info(FILE* f, ostream& out)
   vector<u16> indexToMatIndex(h.count);
   for(i = 0; i < h.count; ++i)
   {
-    u16 bla; fread(&bla, 2, 1, f); toWORD(bla);
+    u16 bla; qfread(&bla, 2, 1, f); toWORD(bla);
     maxIndex = max(maxIndex, bla);
     indexToMatIndex[i] = bla;
   }
