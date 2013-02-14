@@ -516,8 +516,11 @@ void writeMatEntry(ostream& debugOut, const bmd::MatEntry& init)
 {
   int j;
   debugOut << setfill('0');
-  debugOut << "unk: unk1, cull, numChans, texCounts, tevCounts, matData6Index, zMode, matData7Index:";
-  for(j = 0; j < 8; ++j) debugOut << " " << hex << setw(2) << (int)init.unk[j]; debugOut << endl;
+  const char *unknames[8] = {"unk1", "cull", "numChans", "texCounts",
+		"tevCounts", "matData6Index", "zMode", "matData7Index"};
+
+  debugOut << "unk:";
+  for(j = 0; j < 8; ++j) debugOut << " " << unknames[j] << "=" << hex << setw(2) << (int)init.unk[j]; debugOut << endl;
 
   debugOut << "color1 (?): ";
   for(j = 0; j < 2; ++j) debugOut << setw(4) << init.color1[j]; debugOut << endl;
@@ -1169,6 +1172,7 @@ void writeMat3Info(FILE* f, ostream& out)
     bmd::MatEntry init;
     readMatEntry(f, init, isMat2);
 
+    out << "Entry " << i << ": ";
     //dump names of this stage info block
     for(size_t m = 0; m < indexToMatIndex.size(); ++m)
       if(indexToMatIndex[m] == i)
