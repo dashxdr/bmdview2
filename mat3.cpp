@@ -168,6 +168,7 @@ struct MatIndirectTexturingEntry
   } unk4[16];
 };
 
+#if 0 // use the mat3.h version instead
 struct ColorChanInfo
 {
   //this is wrong, the third element is sometimes 3 or 4,
@@ -221,8 +222,8 @@ struct ColorChanInfo
   u8 attenuationFracFunc;
   u8 ambColorSource;
   u8 pad[2];
-
 };
+#endif
 
 struct TexGenInfo
 {
@@ -468,6 +469,31 @@ void displayTevStage(ostream& out, FILE* f, int offset, int size)
   fseek(f, old, SEEK_SET);
 }
 
+void ReadColorChanInfo(ColorChanInfo& dst, FILE *f);
+void displayColorChanInfo(ostream& out, FILE* f, int offset, int size)
+{
+	int num = size / 8;
+	out << "ColorChanInfo: (" << dec << num << " many)\n";
+	int i;
+	long old = ftell(f);
+	fseek(f, offset, SEEK_SET);
+	for(i=0;i<num;++i)
+	{
+		ColorChanInfo t;
+		ReadColorChanInfo(t, f);
+		out << i << ": "
+			<< " enable=" << (int)t.enable
+			<< " matColorSource=" << (int)t.matColorSource
+			<< " litMask=" << (int)t.litMask
+			<< " diff_fn=" << (int)t.diffuseAttenuationFunc
+			<< " attn_fn=" << (int)t.attenuationFracFunc
+			<< " ambColorSource=" << (int)t.ambColorSource
+			<< endl;
+
+	}
+	fseek(f, old, SEEK_SET);
+}
+
 void displaySize(ostream& out, const string& str, int len, int space = -1)
 {
   float count = -1;
@@ -487,7 +513,8 @@ void writeMat3Data(ostream& debugOut, FILE* f, int mat3Offset,
   displayData(debugOut, "cull mode", f, mat3Offset + h.offsets[4], lengths[4], 4);
   displayData(debugOut, "color1", f, mat3Offset + h.offsets[5], lengths[5], 4);
   displayData(debugOut, "numChans (?) (unk[2])", f, mat3Offset + h.offsets[6], lengths[6], 1);
-  displayData(debugOut, "colorChanInfo", f, mat3Offset + h.offsets[7], lengths[7], 8);
+  displayColorChanInfo(debugOut, f, mat3Offset + h.offsets[7], lengths[7]);
+//  displayData(debugOut, "colorChanInfo", f, mat3Offset + h.offsets[7], lengths[7], 8);
   displayData(debugOut, "color2", f, mat3Offset + h.offsets[8], lengths[8], 4);
   displayData(debugOut, "light", f, mat3Offset + h.offsets[9], lengths[9], 52); //there's one dr_comp.bdl
   displayData(debugOut, "texCounts (unk[3])", f, mat3Offset + h.offsets[10], lengths[10], 1);
@@ -516,7 +543,7 @@ void writeMatEntry(ostream& debugOut, const bmd::MatEntry& init)
 {
   int j;
   debugOut << setfill('0');
-  const char *unknames[8] = {"unk1", "cull", "numChans", "texCounts",
+  const char *unknames[8] = {"unk1", "cull", "numChanIndex", "texCounts",
 		"tevCountIndex", "matData6Index", "zMode", "matData7Index"};
 
   debugOut << "unk:";
@@ -744,6 +771,21 @@ void computeSectionLengths(const bmd::Mat3Header& h, vector<size_t>& lengths)
   }
 }
 
+void ReadColorChanInfo(ColorChanInfo& dst, FILE *f)
+{
+	unsigned char temp[8];
+	qfread(temp, 1, sizeof(temp), f);
+
+	dst.enable = temp[0];
+	dst.matColorSource = temp[1];
+	dst.litMask = temp[2];
+	dst.diffuseAttenuationFunc = temp[3];
+	dst.attenuationFracFunc = temp[4];
+	dst.ambColorSource = temp[5];
+	dst.pad[0] = temp[6];
+	dst.pad[1] = temp[7];
+}
+
 void dumpMat3(FILE* f, Mat3& dst)
 {
   //warn("Mat3 section support is incomplete");
@@ -817,25 +859,7 @@ void dumpMat3(FILE* f, Mat3& dst)
   dst.colorChanInfos.resize(lengths[7]/8);
   for(i = 0; i < dst.colorChanInfos.size(); ++i)
   {
-    bmd::ColorChanInfo info;
-    qfread(&info.enable, 1, 1, f);
-    qfread(&info.matColorSource, 1, 1, f);
-    qfread(&info.litMask, 1, 1, f);
-    qfread(&info.diffuseAttenuationFunc, 1, 1, f);
-    qfread(&info.attenuationFracFunc, 1, 1, f);
-    qfread(&info.ambColorSource, 1, 1, f);
-    qfread(&info.pad[0], 1, 1, f);
-    qfread(&info.pad[1], 1, 1, f);
-
-    ColorChanInfo& dstInfo = dst.colorChanInfos[i];
-
-    //this is wrong:
-    dstInfo.enable = info.enable;
-    dstInfo.ambColorSource = info.ambColorSource;
-    dstInfo.matColorSource = info.matColorSource;
-    dstInfo.litMask = info.litMask;
-    dstInfo.attenuationFracFunc = info.attenuationFracFunc;
-    dstInfo.diffuseAttenuationFunc = info.diffuseAttenuationFunc;
+    ReadColorChanInfo(dst.colorChanInfos[i], f);
   }
 
 
