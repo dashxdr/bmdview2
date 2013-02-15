@@ -24,6 +24,7 @@ struct ColorChanInfo
   u8 diffuseAttenuationFunc;
   u8 attenuationFracFunc;
   u8 ambColorSource;
+  u8 pad[2];
 };
 
 struct TexGenInfo
