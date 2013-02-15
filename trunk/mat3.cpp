@@ -428,7 +428,7 @@ void displayTevStage(ostream& out, FILE* f, int offset, int size)
   long old = ftell(f);
   fseek(f, offset, SEEK_SET);
 
-  out << "TevStageInfo (op, bias, scale, doClamp, tevRegId):";
+  out << "TevStageInfo (ff) (ain, bin, cin, din) (op, bias, scale, doClamp, tevRegId):";
 
   int count = size/20;
   for(int i = 0; i < count; ++i)
@@ -517,7 +517,7 @@ void writeMatEntry(ostream& debugOut, const bmd::MatEntry& init)
   int j;
   debugOut << setfill('0');
   const char *unknames[8] = {"unk1", "cull", "numChans", "texCounts",
-		"tevCounts", "matData6Index", "zMode", "matData7Index"};
+		"tevCountIndex", "matData6Index", "zMode", "matData7Index"};
 
   debugOut << "unk:";
   for(j = 0; j < 8; ++j) debugOut << " " << unknames[j] << "=" << hex << setw(2) << (int)init.unk[j]; debugOut << endl;
