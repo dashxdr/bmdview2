@@ -284,7 +284,7 @@ Lib3dsMesh* batchToMesh(const Batch& b,
       int b = 1;
 
       bool flip = true;
-      for(size_t k = 2; j < curr.points.size(); ++j)
+      for(size_t k = 2; k < curr.points.size(); ++k)
       {
         int c = k;
 
