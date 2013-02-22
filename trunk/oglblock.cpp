@@ -959,7 +959,7 @@ std::string getFragmentShaderName(const std::string& baseName, int i)
 void generateShaderStrings(OglBlock& block, const Mat3& mat)
 {
   block.materials.resize(mat.materials.size());
-  for(size_t i = 0; i < mat.materials.size(); ++i)
+  for(unsigned int i = 0; i < mat.materials.size(); ++i)
   {
     OglMaterial& oglMat = block.materials[i];
 
